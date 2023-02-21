@@ -1,8 +1,8 @@
 const User = require("../models/User");
-const auth = require("../middleware/auth");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { v4: uuidv4 } = require("uuid");
+const seed = require("../models/seed");
 
 // SHOW ALL USERS
 const getUsers = async (req, res) => {
@@ -14,22 +14,20 @@ const getUsers = async (req, res) => {
 const seeding = async (req, res) => {
   await User.deleteMany();
 
-  await User.create(
-    [
-      { email: "mrmuhdamir@gmail.com", hash: "123456" },
-      { email: "test@gmail.com", hash: "123456" },
-      { email: "example@gmail.com", hash: "123456" },
-      { email: "hello@gmail.com", hash: "123456" },
-    ],
-    (error, data) => {
-      if (error) {
-        console.log(error);
-        res.json({ status: "error", message: "seeding unsucessful" });
-      } else {
-        res.json({ status: "ok", message: "seeding successful" });
-      }
+  for (const user of seed) {
+    const hash = await bcrypt.hash(user.password, 10);
+    user.hash = hash;
+  }
+
+  await User.create(seed, (error, data) => {
+    if (error) {
+      console.log(error);
+      res.json({ status: "error", message: "seeding unsucessful" });
+    } else {
+      res.json({ status: "ok", message: "seeding successful" });
     }
-  );
+  });
+  
 };
 
 // CREATE NEW USER
