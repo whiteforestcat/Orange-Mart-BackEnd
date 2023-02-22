@@ -14,9 +14,10 @@ const getUsers = async (req, res) => {
 const seeding = async (req, res) => {
   await User.deleteMany();
 
+  // ENCRYPTING PASSWORD AND ASSINGING IT TO NEW HASH KEY
   for (const user of seed) {
     const hash = await bcrypt.hash(user.password, 10);
-    user.hash = hash;
+    user.hash = hash; // new hash key created here
   }
 
   await User.create(seed, (error, data) => {
@@ -27,7 +28,6 @@ const seeding = async (req, res) => {
       res.json({ status: "ok", message: "seeding successful" });
     }
   });
-  
 };
 
 // CREATE NEW USER
@@ -100,7 +100,7 @@ const logIn = async (req, res) => {
       expiresIn: "30D",
       jwtid: uuidv4(),
     });
-    const response = { access, refresh };
+    const response = { access, refresh, payload };
     res.json(response);
   } catch (error) {
     console.log(error);
