@@ -6,8 +6,13 @@ const seed = require("../models/seed");
 
 // SHOW ALL USERS
 const getUsers = async (req, res) => {
-  const allUsers = await User.find();
-  res.json(allUsers);
+  const user = await User.findOne({ email: req.body.email });
+  if (user.admin === true) {
+    const allUsers = await User.find();
+    res.json(allUsers);
+  } else {
+    res.json({ status: "error", message: "user has no admin rights" });
+  }
 };
 
 // SEEDING INITIAL DATA
@@ -43,6 +48,7 @@ const newUser = async (req, res) => {
     const createdUser = await User.create({
       email: req.body.email,
       hash,
+      admin: req.body.admin,
     });
     console.log("created user is ", createdUser);
     res.json({ status: "Okay", message: "user created" });

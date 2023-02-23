@@ -12,7 +12,7 @@ const {
 } = require("../controllers/restricted");
 const { createMessage, seedMessage, getMessage } = require("../controllers/message");
 
-router.get("/users", auth, getUsers);
+router.post("/users", auth, getUsers);
 router.get("/seed", seeding);
 router.put("/newuser", newUser);
 router.post("/login", logIn);

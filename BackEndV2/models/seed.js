@@ -1,8 +1,8 @@
 let seedUsers = [
-  { email: "mrmuhdamir@gmail.com", password: "123456" },
-  { email: "test@gmail.com", password: "123456" },
-  { email: "example@gmail.com", password: "123456" },
-  { email: "hello@gmail.com", password: "123456" },
+  { email: "mrmuhdamir@gmail.com", password: "92344590", admin: true },
+  { email: "test@gmail.com", password: "123456", admin: false },
+  { email: "example@gmail.com", password: "123456", admin: false },
+  { email: "hello@gmail.com", password: "123456", admin: false },
 ];
 
 module.exports = seedUsers;
