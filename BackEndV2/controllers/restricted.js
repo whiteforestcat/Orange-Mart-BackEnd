@@ -9,6 +9,7 @@ const getUsers = async (req, res) => {
   const user = await User.findOne({ email: req.body.email });
   if (user.admin === true) {
     const allUsers = await User.find();
+    console.log("granted admin access")
     res.json(allUsers);
   } else {
     res.json({ status: "error", message: "user has no admin rights" });
@@ -51,7 +52,7 @@ const newUser = async (req, res) => {
       admin: req.body.admin,
     });
     console.log("created user is ", createdUser);
-    res.json({ status: "Okay", message: "user created" });
+    res.json({ status: "Okay", message: "user created", details: createdUser });
   } catch (error) {
     console.log(error);
     res.json({ status: "error", message: "an error has occured" });
