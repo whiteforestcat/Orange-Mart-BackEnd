@@ -10,6 +10,36 @@ const getUsers = async (req, res) => {
   }
 };
 
+// SEEDING INITAL DATA
+const seeding = async (req, res) => {
+  try {
+    await pool.query("DELETE FROM user_accounts");
+    await pool.query(
+      "INSERT INTO user_accounts(email, password, admin) VALUES ($1, $2, $3) RETURNING *",
+      ["mrmuhdamir@gmail.com", "92344590", true]
+    );
+    await pool.query(
+      "INSERT INTO user_accounts(email, password) VALUES ($1, $2) RETURNING *",
+      ["test@gmail.com", "123456789"]
+    );
+    await pool.query(
+      "INSERT INTO user_accounts(email, password) VALUES ($1, $2) RETURNING *",
+      ["hello@gmail.com", "123456789"]
+    );
+    await pool.query(
+      "INSERT INTO user_accounts(email, password) VALUES ($1, $2) RETURNING *",
+      ["bye@gmail.com", "123456789"]
+    );
+    await pool.query(
+      "INSERT INTO user_accounts(email, password) VALUES ($1, $2) RETURNING *",
+      ["world@gmail.com", "123456789"]
+    );
+    res.json("seeding successful");
+  } catch (error) {
+    console.log("ERROR seeding unsuccessful", error.message);
+  }
+};
+
 // DISPLAY PARTICULAR USER USING PARAMS
 const targetUser = async (req, res) => {
   try {
@@ -61,4 +91,11 @@ const deleteUser = async (req, res) => {
   }
 };
 
-module.exports = { newUser, getUsers, targetUser, updateUser, deleteUser };
+module.exports = {
+  newUser,
+  getUsers,
+  targetUser,
+  updateUser,
+  deleteUser,
+  seeding,
+};
