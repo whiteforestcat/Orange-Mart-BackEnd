@@ -123,6 +123,27 @@ const logIn = async (req, res) => {
   }
 };
 
+// REFRESH TOKEN
+const refreshToken = (req, res) => {
+  try {
+    const decoded = jwt.verify(req.body.refresh, process.env.REFRESH_SECRET);
+    const payload = {
+      id: decoded.id,
+      name: decoded.name,
+    };
+    const access = jwt.sign(payload, process.env.ACCESS_SECRET, {
+      expiresIn: "20m",
+      jwtid: uuidv4(),
+    });
+
+    const response = { access };
+    res.json(response);
+  } catch (error) {
+    console.log(error);
+    res.json({ status: "error", message: "refresh token failed" });
+  }
+};
+
 // UPDATE USER PROFILE
 const updateUser = async (req, res) => {
   try {
@@ -156,4 +177,5 @@ module.exports = {
   deleteUser,
   seeding,
   logIn,
+  refreshToken
 };
