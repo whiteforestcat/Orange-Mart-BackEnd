@@ -1,5 +1,7 @@
 const pool = require("../db/db");
-const bcrypt = require("bcrypt")
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const { v4: uuidv4 } = require("uuid");
 
 // DSIPLAY ALL USERS
 const getUsers = async (req, res) => {
@@ -65,13 +67,57 @@ const newUser = async (req, res) => {
       res.json({ status: "error", message: "duplicate email" });
     }
     // res.json(existingUser.rows[0]);
-    const hash = await bcrypt.hash(req.body.password, 10)
+    const hash = await bcrypt.hash(req.body.password, 10);
     const user = await pool.query(
       "INSERT INTO user_accounts (email, password) VALUES($1, $2) RETURNING *",
       [req.body.email, hash]
     );
     // RETURNING * only for INSERT
     res.json(user.rows[0]);
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+// LOGGING IN
+const logIn = async (req, res) => {
+  try {
+    const existingUser = await pool.query(
+      "SELECT * FROM user_accounts WHERE email = $1",
+      [req.body.email]
+    );
+    // res.json(existingUser.rows[0]);
+
+    // CHECKING IF EMAIL EXISTS
+    if (!existingUser.rows[0]) {
+      return res.json({
+        status: "error",
+        message: "email does not exist",
+      });
+    }
+    const result = await bcrypt.compare(
+      req.body.password,
+      existingUser.rows[0].password
+    );
+    // CHECK IF PASSWORD IS CORRECT
+    if (!result) {
+      return res.json({ status: "error", message: "incorrect password" });
+    }
+    //  CREATING TOKEN
+    const payload = {
+      id: existingUser.rows[0].id,
+      email: existingUser.rows[0].email,
+    };
+    const access = jwt.sign(payload, process.env.ACCESS_SECRET, {
+      expiresIn: "20m",
+      jwtid: uuidv4(),
+    });
+    const refresh = jwt.sign(payload, process.env.REFRESH_SECRET, {
+      expiresIn: "30D",
+      jwtid: uuidv4(),
+    });
+    const response = { access, refresh, payload };
+    res.json(response);
   } catch (error) {
     console.log(error.message);
   }
@@ -109,4 +155,5 @@ module.exports = {
   updateUser,
   deleteUser,
   seeding,
+  logIn,
 };
