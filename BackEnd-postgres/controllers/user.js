@@ -1,4 +1,5 @@
 const pool = require("../db/db");
+const bcrypt = require("bcrypt")
 
 // DSIPLAY ALL USERS
 const getUsers = async (req, res) => {
@@ -64,9 +65,10 @@ const newUser = async (req, res) => {
       res.json({ status: "error", message: "duplicate email" });
     }
     // res.json(existingUser.rows[0]);
+    const hash = await bcrypt.hash(req.body.password, 10)
     const user = await pool.query(
       "INSERT INTO user_accounts (email, password) VALUES($1, $2) RETURNING *",
-      [req.body.email, req.body.password]
+      [req.body.email, hash]
     );
     // RETURNING * only for INSERT
     res.json(user.rows[0]);
