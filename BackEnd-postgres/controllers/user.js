@@ -43,7 +43,7 @@ const seeding = async (req, res) => {
   }
 };
 
-// DISPLAY PARTICULAR USER USING PARAMS
+// DISPLAY PARTICULAR USER USING PARAMS (SEARCH BY ID)
 const targetUser = async (req, res) => {
   try {
     const user = await pool.query("SELECT * FROM user_accounts WHERE id = $1", [
