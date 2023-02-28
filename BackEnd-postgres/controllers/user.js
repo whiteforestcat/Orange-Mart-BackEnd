@@ -18,23 +18,23 @@ const seeding = async (req, res) => {
   try {
     await pool.query("DELETE FROM user_accounts");
     await pool.query(
-      "INSERT INTO user_accounts(email, password, admin) VALUES ($1, $2, $3) RETURNING *",
+      "INSERT INTO user_accounts(email, hash, admin) VALUES ($1, $2, $3) RETURNING *",
       ["mrmuhdamir@gmail.com", "92344590", true]
     );
     await pool.query(
-      "INSERT INTO user_accounts(email, password) VALUES ($1, $2) RETURNING *",
+      "INSERT INTO user_accounts(email, hash) VALUES ($1, $2) RETURNING *",
       ["test@gmail.com", "123456789"]
     );
     await pool.query(
-      "INSERT INTO user_accounts(email, password) VALUES ($1, $2) RETURNING *",
+      "INSERT INTO user_accounts(email, hash) VALUES ($1, $2) RETURNING *",
       ["hello@gmail.com", "123456789"]
     );
     await pool.query(
-      "INSERT INTO user_accounts(email, password) VALUES ($1, $2) RETURNING *",
+      "INSERT INTO user_accounts(email, hash) VALUES ($1, $2) RETURNING *",
       ["bye@gmail.com", "123456789"]
     );
     await pool.query(
-      "INSERT INTO user_accounts(email, password) VALUES ($1, $2) RETURNING *",
+      "INSERT INTO user_accounts(email, hash) VALUES ($1, $2) RETURNING *",
       ["world@gmail.com", "123456789"]
     );
     res.json("seeding successful");
@@ -64,12 +64,12 @@ const newUser = async (req, res) => {
     );
     if (existingUser.rows[0]) {
       console.log("hello");
-      res.json({ status: "error", message: "duplicate email" });
+      return res.json({ status: "error", message: "duplicate email" });
     }
     // res.json(existingUser.rows[0]);
-    const hash = await bcrypt.hash(req.body.password, 10);
+    const hash = await bcrypt.hash(req.body.hash, 10);
     const user = await pool.query(
-      "INSERT INTO user_accounts (email, password) VALUES($1, $2) RETURNING *",
+      "INSERT INTO user_accounts (email, hash) VALUES($1, $2) RETURNING *",
       [req.body.email, hash]
     );
     // RETURNING * only for INSERT
@@ -96,10 +96,10 @@ const logIn = async (req, res) => {
       });
     }
     const result = await bcrypt.compare(
-      req.body.password,
-      existingUser.rows[0].password
+      req.body.hash,
+      existingUser.rows[0].hash
     );
-    // CHECK IF PASSWORD IS CORRECT
+    // CHECK IF hash IS CORRECT
     if (!result) {
       return res.json({ status: "error", message: "incorrect password" });
     }
@@ -144,14 +144,14 @@ const refreshToken = (req, res) => {
   }
 };
 
-// UPDATE USER PROFILE
+// UPDATE USER PROFILE (CHANGE USERNAME OR PASSWORD)
 const updateUser = async (req, res) => {
   try {
     await pool.query(
-      "UPDATE user_accounts SET email = $1, password = $2 WHERE id = $3",
-      [req.body.email, req.body.password, req.params.id]
+      "UPDATE user_accounts SET email = $1, hash = $2 WHERE id = $3",
+      [req.body.email, req.body.hash, req.params.id]
     );
-    res.json("User updated");
+    res.json("user updated");
   } catch (error) {
     console.log(error.message);
   }
@@ -177,5 +177,5 @@ module.exports = {
   deleteUser,
   seeding,
   logIn,
-  refreshToken
+  refreshToken,
 };
