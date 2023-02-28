@@ -13,10 +13,10 @@ app.use(express.json());
 app.post("/newuser", async (req, res) => {
   try {
     const user = await pool.query(
-      "INSERT INTO user_accounts (email, password) VALUES($1, $2)",
+      "INSERT INTO user_accounts (email, password) VALUES($1, $2) RETURNING *",
       [req.body.email, req.body.password]
     );
-    res.json(user);
+    res.json(user.rows[0]);
   } catch (error) {
     console.log(error.message);
   }
