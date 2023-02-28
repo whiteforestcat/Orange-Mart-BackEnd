@@ -15,7 +15,7 @@ const {
 } = require("../controllers/user");
 
 // USER ROUTES
-router.get("/allusers", auth, getUsers); // display all users
+router.post("/allusers", auth, getUsers); // display all users
 router.get("/seed", seeding); // seeding data
 router.get("/allusers/:id", targetUser); // display specific user via params
 router.put("/newuser", newUser); // create new user

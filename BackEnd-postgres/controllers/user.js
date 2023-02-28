@@ -6,12 +6,29 @@ const { v4: uuidv4 } = require("uuid");
 // DSIPLAY ALL USERS
 const getUsers = async (req, res) => {
   try {
-    const user = await pool.query("SELECT * FROM user_accounts");
-    res.json(user.rows);
+    const existingUser = await pool.query(
+      "SELECT * FROM user_accounts WHERE email = $1",
+      [req.body.email]
+    );
+    // res.json(existingUser.rows[0])
+    if (existingUser.rows[0].admin === true) {
+      console.log("granted admin access");
+      const user = await pool.query("SELECT * FROM user_accounts");
+      res.json(user.rows);
+    }
+    else {
+        res.json({ status: "error", message: "user has no admin rights" });
+    }
   } catch (error) {
     console.log(error.message);
   }
 };
+
+const test = "hello";
+async function hasher(raw) {
+  const res = await bcrypt.hash(raw, 10);
+  return JSON.stringify(res);
+}
 
 // SEEDING INITAL DATA
 const seeding = async (req, res) => {
@@ -23,7 +40,7 @@ const seeding = async (req, res) => {
     );
     await pool.query(
       "INSERT INTO user_accounts(email, hash) VALUES ($1, $2) RETURNING *",
-      ["test@gmail.com", "123456789"]
+      ["test@gmail.com", `${hasher("123456789")}`]
     );
     await pool.query(
       "INSERT INTO user_accounts(email, hash) VALUES ($1, $2) RETURNING *",
@@ -69,8 +86,8 @@ const newUser = async (req, res) => {
     // res.json(existingUser.rows[0]);
     const hash = await bcrypt.hash(req.body.hash, 10);
     const user = await pool.query(
-      "INSERT INTO user_accounts (email, hash) VALUES($1, $2) RETURNING *",
-      [req.body.email, hash]
+      "INSERT INTO user_accounts (email, hash, admin) VALUES($1, $2, $3) RETURNING *",
+      [req.body.email, hash, req.body.admin]
     );
     // RETURNING * only for INSERT
     res.json(user.rows[0]);
@@ -86,7 +103,7 @@ const logIn = async (req, res) => {
       "SELECT * FROM user_accounts WHERE email = $1",
       [req.body.email]
     );
-    // res.json(existingUser.rows[0]);
+    // res.json(existingUser.rows[0].email);
 
     // CHECKING IF EMAIL EXISTS
     if (!existingUser.rows[0]) {
