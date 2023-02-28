@@ -52,9 +52,18 @@ const targetUser = async (req, res) => {
   }
 };
 
-// CREATE NEW USERS
+// CREATE NEW USER
 const newUser = async (req, res) => {
   try {
+    const existingUser = await pool.query(
+      "SELECT email FROM user_accounts WHERE email = $1",
+      [req.body.email]
+    );
+    if (existingUser.rows[0]) {
+      console.log("hello");
+      res.json({ status: "error", message: "duplicate email" });
+    }
+    // res.json(existingUser.rows[0]);
     const user = await pool.query(
       "INSERT INTO user_accounts (email, password) VALUES($1, $2) RETURNING *",
       [req.body.email, req.body.password]
