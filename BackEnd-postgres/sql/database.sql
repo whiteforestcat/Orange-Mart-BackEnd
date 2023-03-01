@@ -9,18 +9,18 @@ CREATE TABLE user_accounts(
 
 CREATE TABLE favourites(
     id BIGSERIAL NOT NULL PRIMARY KEY,
-    name VARCHAR(50) NOT NULL,
-    description VARCHAR(50) NOT NULL,
-    price SMALLINT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    description VARCHAR(255) NOT NULL,
+    price DECIMAL(5,2) NOT NULL,
     account_id BIGINT REFERENCES user_accounts (id)
 );
 
 CREATE TABLE gallery_items(
     id BIGSERIAL NOT NULL PRIMARY KEY,
-    name VARCHAR(50) NOT NULL,
-    description VARCHAR(50) NOT NULL,
-    price SMALLINT NOT NULL,
-    tags VARCHAR(50) NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    description VARCHAR(255) NOT NULL,
+    price DECIMAL(5,2) NOT NULL,
+    tag VARCHAR(255) NOT NULL,
     stock SMALLINT NOT NULL
 );
 
@@ -33,18 +33,18 @@ CREATE TABLE gallery_items(
 
 CREATE TABLE user_cart(
     id BIGSERIAL NOT NULL PRIMARY KEY,
-    name VARCHAR(50) NOT NULL,
-    description VARCHAR(50) NOT NULL,
-    price SMALLINT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    description VARCHAR(255) NOT NULL,
+    price DECIMAL(5,2) NOT NULL,
     quantity SMALLINT NOT NULL,
     account_id BIGINT REFERENCES user_accounts (id)
 );
 
 CREATE TABLE shipping(
     id BIGSERIAL NOT NULL PRIMARY KEY,
-    name VARCHAR(50) NOT NULL,
-    description VARCHAR(50) NOT NULL,
-    price SMALLINT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    description VARCHAR(255) NOT NULL,
+    price DECIMAL(5,2) NOT NULL,
     quantity SMALLINT NOT NULL,
     order_date DATE NOT NULL,
     delivery_date DATE NOT NULL,
