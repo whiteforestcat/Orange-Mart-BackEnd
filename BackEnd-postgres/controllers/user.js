@@ -15,9 +15,8 @@ const getUsers = async (req, res) => {
       console.log("granted admin access");
       const user = await pool.query("SELECT * FROM user_accounts");
       res.json(user.rows);
-    }
-    else {
-        res.json({ status: "error", message: "user has no admin rights" });
+    } else {
+      res.json({ status: "error", message: "user has no admin rights" });
     }
   } catch (error) {
     console.log(error.message);
@@ -26,7 +25,7 @@ const getUsers = async (req, res) => {
 
 const test = "hello";
 async function hasher(raw) {
-  const res = await bcrypt.hash(raw, 10);
+  const res = await bcrypt.hash(raw, 12);
   return JSON.stringify(res);
 }
 
@@ -40,7 +39,7 @@ const seeding = async (req, res) => {
     );
     await pool.query(
       "INSERT INTO user_accounts(email, hash) VALUES ($1, $2) RETURNING *",
-      ["test@gmail.com", `${hasher("123456789")}`]
+      ["test@gmail.com", "123456789"]
     );
     await pool.query(
       "INSERT INTO user_accounts(email, hash) VALUES ($1, $2) RETURNING *",
@@ -54,6 +53,14 @@ const seeding = async (req, res) => {
       "INSERT INTO user_accounts(email, hash) VALUES ($1, $2) RETURNING *",
       ["world@gmail.com", "123456789"]
     );
+    const users = await pool.query("SELECT * FROM user_accounts");
+    // res.json(user.rows);
+    users.rows.map(async (user, index) => {
+        const encrypted = await bcrypt.hash(user.hash, 12)
+        await pool.query("UPDATE user_accounts SET hash =$1 WHERE id = $2", [encrypted, index + 1])
+        console.log(user.hash)
+        console.log(encrypted)
+    })
     res.json("seeding successful");
   } catch (error) {
     console.log("ERROR seeding unsuccessful", error.message);
@@ -81,10 +88,11 @@ const newUser = async (req, res) => {
     );
     if (existingUser.rows[0]) {
       console.log("hello");
+      //   console.log(existingUser.rows)
       return res.json({ status: "error", message: "duplicate email" });
     }
     // res.json(existingUser.rows[0]);
-    const hash = await bcrypt.hash(req.body.hash, 10);
+    const hash = await bcrypt.hash(req.body.hash, 12);
     const user = await pool.query(
       "INSERT INTO user_accounts (email, hash, admin) VALUES($1, $2, $3) RETURNING *",
       [req.body.email, hash, req.body.admin]
