@@ -26,7 +26,7 @@ router.post("/login", logIn);
 router.post("/refresh", refreshToken)
 
 // FAVOURITES ROUTES
-router.post("/addtofavourites", addToFavourites)
-router.get("/allfavourites", getFavourites)
+router.post("/addtofavourites", addToFavourites) // add item to favourites
+router.get("/allfavourites", getFavourites) // display all favourites
 
 module.exports = router;
