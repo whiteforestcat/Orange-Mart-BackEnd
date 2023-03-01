@@ -13,6 +13,7 @@ const {
   logIn,
   refreshToken,
 } = require("../controllers/user");
+const { addToFavourites, getFavourites } = require("../controllers/favourite");
 
 // USER ROUTES
 router.post("/allusers", auth, getUsers); // display all users
@@ -23,5 +24,9 @@ router.patch("/allusers/:id", updateUser); // update user via params
 router.delete("/deleteuser/:id", deleteUser); // delete use via params
 router.post("/login", logIn);
 router.post("/refresh", refreshToken)
+
+// FAVOURITES ROUTES
+router.post("/addtofavourites", addToFavourites)
+router.get("/allfavourites", getFavourites)
 
 module.exports = router;
