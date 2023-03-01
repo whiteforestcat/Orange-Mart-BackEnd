@@ -23,12 +23,6 @@ const getUsers = async (req, res) => {
   }
 };
 
-const test = "hello";
-async function hasher(raw) {
-  const res = await bcrypt.hash(raw, 12);
-  return JSON.stringify(res);
-}
-
 // SEEDING INITAL DATA
 const seeding = async (req, res) => {
   try {
