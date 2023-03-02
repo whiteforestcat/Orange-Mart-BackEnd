@@ -3,8 +3,8 @@ const pool = require("../db/db");
 // DISPLAY ALL FAVOURITES ITEMS
 const getFavourites = async (req, res) => {
   try {
-    const favourites = await pool.query("SELECT * FROM favourites")
-    res.json(favourites.rows)
+    const favourites = await pool.query("SELECT * FROM favourites");
+    res.json(favourites.rows);
   } catch (error) {
     console.log(error.message);
   }
@@ -37,4 +37,33 @@ const addToFavourites = async (req, res) => {
   }
 };
 
-module.exports = { addToFavourites, getFavourites };
+// ADD TO FAVOURITES VIA PARAMS
+const addToFavouritesV2 = async (req, res) => {
+  try {
+    await pool.query("UPDATE favourites SET ", [
+      req.body.name,
+      req.body.description,
+      req.body.price,
+    ]);
+    res.json("item added to favourites");
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+// REMOVE FROM FAVOURITES
+const removeFavourites = async (req, res) => {
+  try {
+    await pool.query("DELETE FROM favourites WHERE id = $1", [req.params.id]);
+    res.json("favourite item successfully removed");
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+module.exports = {
+  getFavourites,
+  addToFavourites,
+  addToFavouritesV2,
+  removeFavourites,
+};
