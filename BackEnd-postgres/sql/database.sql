@@ -25,9 +25,9 @@ CREATE TABLE gallery_items(
 );
 
  -- SURROGATE TABLE BETWEEN FAVOURITES AND GALLERY_ITEMS
- CREATE TABLE favourites_gallery_items(
-    favourites_id BIGINT REFERENCES gallery_items (id),
-    gallery_items_id BIGINT REFERENCES favourites (id),
+ CREATE TABLE favourites_gallery(
+    favourites_id BIGINT REFERENCES favourites (id),
+    gallery_items_id BIGINT REFERENCES gallery_items (id),
     PRIMARY KEY (favourites_id, gallery_items_id)
  );
 

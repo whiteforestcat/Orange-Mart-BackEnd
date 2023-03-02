@@ -4,7 +4,10 @@ const pool = require("../db/db");
 const getFavourites = async (req, res) => {
   try {
     const favourites = await pool.query("SELECT * FROM favourites");
+    // USE THE UPDATED SQL COMMAND, CHANGE THE ABOVE
     res.json(favourites.rows);
+    // THIS WILL DISPLAY ALL ACCOUNTS WITH THEIR FAVOURITE ITEMS
+    // USE ARRAY.FILTER() TO FILTER OUT ONLY BY PAYLOAD.EMAIL SO THAT ONLY THAT USER'S FAVOURITES WILL SHOW
   } catch (error) {
     console.log(error.message);
   }
