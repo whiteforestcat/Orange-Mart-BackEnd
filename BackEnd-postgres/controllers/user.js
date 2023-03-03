@@ -7,13 +7,13 @@ const { v4: uuidv4 } = require("uuid");
 const getUsers = async (req, res) => {
   try {
     const existingUser = await pool.query(
-      "SELECT * FROM user_accounts WHERE email = $1",
+      "SELECT * FROM users WHERE email = $1",
       [req.body.email]
     );
     // res.json(existingUser.rows[0])
     if (existingUser.rows[0].admin === true) {
       console.log("granted admin access");
-      const user = await pool.query("SELECT * FROM user_accounts");
+      const user = await pool.query("SELECT * FROM users");
       res.json(user.rows);
     } else {
       res.json({ status: "error", message: "user has no admin rights" });
@@ -26,35 +26,51 @@ const getUsers = async (req, res) => {
 // SEEDING INITAL DATA
 const seeding = async (req, res) => {
   try {
-    await pool.query("DELETE FROM user_accounts");
+    await pool.query("DELETE FROM users");
+
+    // FIRST ACCOUNT
     await pool.query(
-      "INSERT INTO user_accounts(email, hash, admin) VALUES ($1, $2, $3) RETURNING *",
+      "INSERT INTO users(email, hash, admin) VALUES ($1, $2, $3) RETURNING *",
       ["mrmuhdamir@gmail.com", "92344590", true]
     );
+    await pool.query("INSERT INTO favs (users_id) VALUES ($1)", [1]);
+    // SECOND ACCOUNT
     await pool.query(
-      "INSERT INTO user_accounts(email, hash) VALUES ($1, $2) RETURNING *",
+      "INSERT INTO users (email, hash) VALUES ($1, $2) RETURNING *",
       ["test@gmail.com", "123456789"]
     );
+    await pool.query("INSERT INTO favs (users_id) VALUES ($1)", [2]);
+    // THIRD ACCOUNT
     await pool.query(
-      "INSERT INTO user_accounts(email, hash) VALUES ($1, $2) RETURNING *",
+      "INSERT INTO users (email, hash) VALUES ($1, $2) RETURNING *",
       ["hello@gmail.com", "123456789"]
     );
+    await pool.query("INSERT INTO favs (users_id) VALUES ($1)", [3]);
+    // FOURTH ACCOUNT
     await pool.query(
-      "INSERT INTO user_accounts(email, hash) VALUES ($1, $2) RETURNING *",
+      "INSERT INTO users (email, hash) VALUES ($1, $2) RETURNING *",
       ["bye@gmail.com", "123456789"]
     );
+    await pool.query("INSERT INTO favs (users_id) VALUES ($1)", [4]);
+    // FIFTH ACCOUNT
     await pool.query(
-      "INSERT INTO user_accounts(email, hash) VALUES ($1, $2) RETURNING *",
+      "INSERT INTO users (email, hash) VALUES ($1, $2) RETURNING *",
       ["world@gmail.com", "123456789"]
     );
-    const users = await pool.query("SELECT * FROM user_accounts");
+    await pool.query("INSERT INTO favs (users_id) VALUES ($1)", [5]);
+    const users = await pool.query("SELECT * FROM users");
     // res.json(user.rows);
+
+    // ENCRYPTING PASSWORDS
     users.rows.map(async (user, index) => {
-        const encrypted = await bcrypt.hash(user.hash, 12)
-        await pool.query("UPDATE user_accounts SET hash =$1 WHERE id = $2", [encrypted, index + 1])
-        console.log(user.hash)
-        console.log(encrypted)
-    })
+      const encrypted = await bcrypt.hash(user.hash, 12);
+      await pool.query("UPDATE users SET hash =$1 WHERE id = $2", [
+        encrypted,
+        index + 1,
+      ]);
+      console.log(user.hash);
+      console.log(encrypted);
+    });
     res.json("seeding successful");
   } catch (error) {
     console.log("ERROR seeding unsuccessful", error.message);
@@ -64,7 +80,7 @@ const seeding = async (req, res) => {
 // DISPLAY PARTICULAR USER USING PARAMS (SEARCH BY ID)
 const targetUser = async (req, res) => {
   try {
-    const user = await pool.query("SELECT * FROM user_accounts WHERE id = $1", [
+    const user = await pool.query("SELECT * FROM users WHERE id = $1", [
       req.params.id,
     ]);
     res.json(user.rows);
@@ -77,7 +93,7 @@ const targetUser = async (req, res) => {
 const newUser = async (req, res) => {
   try {
     const existingUser = await pool.query(
-      "SELECT email FROM user_accounts WHERE email = $1",
+      "SELECT email FROM users WHERE email = $1",
       [req.body.email]
     );
     if (existingUser.rows[0]) {
@@ -88,7 +104,7 @@ const newUser = async (req, res) => {
     // res.json(existingUser.rows[0]);
     const hash = await bcrypt.hash(req.body.hash, 12);
     const user = await pool.query(
-      "INSERT INTO user_accounts (email, hash, admin) VALUES($1, $2, $3) RETURNING *",
+      "INSERT INTO users (email, hash, admin) VALUES($1, $2, $3) RETURNING *",
       [req.body.email, hash, req.body.admin]
     );
     // RETURNING * only for INSERT
@@ -102,7 +118,7 @@ const newUser = async (req, res) => {
 const logIn = async (req, res) => {
   try {
     const existingUser = await pool.query(
-      "SELECT * FROM user_accounts WHERE email = $1",
+      "SELECT * FROM users WHERE email = $1",
       [req.body.email]
     );
     // res.json(existingUser.rows[0].email);
@@ -166,10 +182,11 @@ const refreshToken = (req, res) => {
 // UPDATE USER PROFILE (CHANGE USERNAME OR PASSWORD)
 const updateUser = async (req, res) => {
   try {
-    await pool.query(
-      "UPDATE user_accounts SET email = $1, hash = $2 WHERE id = $3",
-      [req.body.email, req.body.hash, req.params.id]
-    );
+    await pool.query("UPDATE users SET email = $1, hash = $2 WHERE id = $3", [
+      req.body.email,
+      req.body.hash,
+      req.params.id,
+    ]);
     res.json("user updated");
   } catch (error) {
     console.log(error.message);
@@ -179,9 +196,7 @@ const updateUser = async (req, res) => {
 // DELETE USER
 const deleteUser = async (req, res) => {
   try {
-    await pool.query("DELETE FROM user_accounts where id = $1", [
-      req.params.id,
-    ]);
+    await pool.query("DELETE FROM users where id = $1", [req.params.id]);
     res.json("User Deleted");
   } catch (error) {
     console.log(error.message);
