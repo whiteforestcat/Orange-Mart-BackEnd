@@ -1,13 +1,24 @@
 const pool = require("../db/db");
 
 // DISPLAY ALL FAVOURITES ITEMS
+// const getFavourites = async (req, res) => {
+//   try {
+//     const favourites = await pool.query("SELECT * FROM favourites");
+//     // USE THE UPDATED SQL COMMAND, CHANGE THE ABOVE
+//     res.json(favourites.rows);
+//     // THIS WILL DISPLAY ALL ACCOUNTS WITH THEIR FAVOURITE ITEMS
+//     // USE ARRAY.FILTER() TO FILTER OUT ONLY BY PAYLOAD.EMAIL SO THAT ONLY THAT USER'S FAVOURITES WILL SHOW
+//   } catch (error) {
+//     console.log(error.message);
+//   }
+// };
+
 const getFavourites = async (req, res) => {
   try {
-    const favourites = await pool.query("SELECT * FROM favourites");
-    // USE THE UPDATED SQL COMMAND, CHANGE THE ABOVE
+    const favourites = await pool.query(
+      "SELECT user_accounts.email as name, gallery_items.name as fav_item FROM user_accounts JOIN favourites ON favourites.account_id = user_accounts.id JOIN favourites_gallery ON favourites_gallery.favourites_id = favourites.id JOIN gallery_items ON gallery_items.id = favourites_gallery.gallery_items_id"
+    );
     res.json(favourites.rows);
-    // THIS WILL DISPLAY ALL ACCOUNTS WITH THEIR FAVOURITE ITEMS
-    // USE ARRAY.FILTER() TO FILTER OUT ONLY BY PAYLOAD.EMAIL SO THAT ONLY THAT USER'S FAVOURITES WILL SHOW
   } catch (error) {
     console.log(error.message);
   }
