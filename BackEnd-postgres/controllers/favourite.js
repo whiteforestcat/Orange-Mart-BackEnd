@@ -28,14 +28,40 @@ const getFavourites = async (req, res) => {
 
 // ADD TO FAVOURITES
 const addToFavourites = async (req, res) => {
-    try {
-        await pool.query("INSERT INTO favs_items (favs_id, items_id) VALUES ($1, $2)",
-        [req.body.emailId, req.body.itemId ])
-        res.json("item added to favourites")
-    } catch (error) {
-        console.log(error.message)
+  try {
+    // NEED TO OPTIMISE add to fav to prevent duplicates
+    await pool.query(
+      "INSERT INTO favs_items (favs_id, items_id) VALUES ($1, $2)",
+      [req.body.emailId, req.body.itemId]
+    );
+    res.json("item added to favourites");
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+// REMOVE FAVOURITES
+const removeFavourites = async (req, res) => {
+  try {
+    const favItem = await pool.query(
+      "SELECT * FROM favs_items WHERE favs_id = $1 AND items_id = $2",
+      [req.body.emailId, req.body.itemId]
+    );
+    if (favItem.rows[0]) {
+      await pool.query(
+        "DELETE FROM favs_items WHERE favs_id = $1 AND items_id = $2",
+        [req.body.emailId, req.body.itemId]
+      );
+        return res.json("favourite item successfully removed");
+    //   res.json(favItem.rows);
+    } 
+    else {
+      res.json("item not in favourite list");
     }
-}
+  } catch (error) {
+    console.log(error.message);
+  }
+};
 
 // // ADD TO FAVOURITES
 // const addToFavourites = async (req, res) => {
@@ -91,6 +117,6 @@ const addToFavourites = async (req, res) => {
 module.exports = {
   getFavourites,
   addToFavourites,
-//   addToFavouritesV2,
-//   removeFavourites,
+  //   addToFavouritesV2,
+  removeFavourites,
 };

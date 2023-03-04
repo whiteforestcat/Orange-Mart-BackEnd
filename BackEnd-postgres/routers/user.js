@@ -36,6 +36,6 @@ router.get("/allitems", allItems); // display all items to sell
 // FAVOURITES ROUTES
 router.post("/addtofavourites", addToFavourites); // add item to favourites
 router.post("/allfavourites", getFavourites); // display all favourites
-// router.delete("/deletefav/:id", removeFavourites);  // delete favourites
+router.delete("/deletefav", removeFavourites);  // delete favourites
 
 module.exports = router;
