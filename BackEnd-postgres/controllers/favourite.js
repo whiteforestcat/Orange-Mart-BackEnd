@@ -17,7 +17,7 @@ const pool = require("../db/db");
 const getFavourites = async (req, res) => {
   try {
     const favourites = await pool.query(
-      "SELECT users.email as name, items.name as favs_item FROM users JOIN favs ON favs.users_id = users.id JOIN favs_items ON favs_items.favs_id = favs.id JOIN items ON items.id = favs_items.items_id WHERE users.id = $1",
+      "SELECT users.email AS name, items.id AS itemid, items.name AS favs_item FROM users JOIN favs ON favs.users_id = users.id JOIN favs_items ON favs_items.favs_id = favs.id JOIN items ON items.id = favs_items.items_id WHERE users.id = $1",
       [req.body.id]
     );
     res.json(favourites.rows);
