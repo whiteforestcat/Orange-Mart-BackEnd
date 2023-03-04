@@ -2,6 +2,7 @@ const pool = require("../db/db");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { v4: uuidv4 } = require("uuid");
+const { parse } = require("pg-protocol");
 
 // DSIPLAY ALL USERS
 const getUsers = async (req, res) => {
@@ -107,6 +108,12 @@ const newUser = async (req, res) => {
       "INSERT INTO users (email, hash, admin) VALUES($1, $2, $3) RETURNING *",
       [req.body.email, hash, req.body.admin]
     );
+    const rowNumberFavs = await pool.query("SELECT COUNT(*) FROM favs");
+    let nextRowNumberFavs = parseInt(rowNumberFavs.rows[0].count);
+    // console.log("next number of rows in favs:", (nextRowNumberFavs += 1));
+    await pool.query("INSERT INTO favs (users_id) VALUES ($1)", [
+      (nextRowNumberFavs += 1),
+    ]);
     // RETURNING * only for INSERT
     res.json(user.rows[0]);
   } catch (error) {
