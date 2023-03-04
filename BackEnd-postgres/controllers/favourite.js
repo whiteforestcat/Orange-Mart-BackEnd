@@ -13,11 +13,12 @@ const pool = require("../db/db");
 //   }
 // };
 
-// DISPLAY ALL FAVOURITES ITEMS WITH CORRESPONDING USERS
+// DISPLAY ALL FAVOURITES ITEMS WITH CORRESPONDING USERS BY ID
 const getFavourites = async (req, res) => {
   try {
     const favourites = await pool.query(
-      "SELECT users.email as name, items.name as favs_item FROM users JOIN favs ON favs.users_id = users.id JOIN favs_items ON favs_items.favs_id = favs.id JOIN items ON items.id = favs_items.items_id"
+      "SELECT users.email as name, items.name as favs_item FROM users JOIN favs ON favs.users_id = users.id JOIN favs_items ON favs_items.favs_id = favs.id JOIN items ON items.id = favs_items.items_id WHERE users.id = $1",
+      [req.body.id]
     );
     res.json(favourites.rows);
   } catch (error) {
