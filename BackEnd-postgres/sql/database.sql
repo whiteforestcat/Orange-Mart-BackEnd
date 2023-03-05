@@ -30,7 +30,6 @@ CREATE TABLE items(
 
 CREATE TABLE cart(
     id BIGSERIAL NOT NULL PRIMARY KEY,
-    quantity SMALLINT,
     -- quantity SMALLINT NOT NULL,
     users_id BIGINT REFERENCES users (id)
 );
@@ -39,6 +38,7 @@ CREATE TABLE cart(
   CREATE TABLE cart_items(
     cart_id BIGINT REFERENCES cart (id),
     items_id BIGINT REFERENCES items (id),
+    quantity SMALLINT,
     PRIMARY KEY (cart_id, items_id)
  );
 

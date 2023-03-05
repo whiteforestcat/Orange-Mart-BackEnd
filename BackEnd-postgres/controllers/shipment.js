@@ -4,7 +4,7 @@ const pool = require("../db/db")
 const getShipment = async (req, res) => {
   try {
     const shipment = await pool.query(
-      "SELECT users.email AS name, items.id AS itemid, items.name AS cart_item FROM users JOIN cart ON cart.users_id = users.id JOIN cart_items ON cart_items.cart_id = cart.id JOIN items ON items.id = cart_items.items_id JOIN cart_shipment ON cart_shipment.cart_id = cart.id JOIN shipment ON shipment.id = cart_shipment.shipment_id WHERE users.id = $1",
+      "SELECT users.email AS name, cart.id AS cartid, items.name AS cart_item FROM users JOIN cart ON cart.users_id = users.id JOIN cart_items ON cart_items.cart_id = cart.id JOIN items ON items.id = cart_items.items_id JOIN cart_shipment ON cart_shipment.cart_id = cart.id JOIN shipment ON shipment.id = cart_shipment.shipment_id WHERE users.id = $1",
       [req.body.id]
     );
     res.json(shipment.rows);
