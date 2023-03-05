@@ -28,8 +28,27 @@ const addToShipment = async (req, res) => {
 };
 
 // DELETE FROM SHIPPING LIST (IE CANCEL ORDER)
+const deleteShipment = async (req, res) => {
+  try {
+    const shipment = await pool.query(
+      "SELECT * FROM cart_shipment WHERE shipment_id = $1 AND cart_id = $2",
+      [req.body.emailId, req.body.cartId]
+    );
+    if (shipment.rows[0]) {
+      await pool.query(
+        "DELETE FROM cart_shipment WHERE shipment_id = $1 AND cart_id = $2",
+        [req.body.emailId, req.body.cartId]
+      );
+      return res.json("shipment cancelled");
+      //   res.json(favItem.rows);
+    } else {
+      res.json("shipment does not exist");
+    }
+  } catch (error) {
+    console.log(error.message);
+  }
+};
 
 
 
-
-module.exports ={ addToShipment, getShipment}
+module.exports ={ addToShipment, getShipment, deleteShipment}

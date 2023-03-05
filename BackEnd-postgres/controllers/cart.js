@@ -43,7 +43,7 @@ const removeCart = async (req, res) => {
     //   res.json(favItem.rows);
     } 
     else {
-      res.json("item not in favourite list");
+      res.json("item not in cart");
     }
   } catch (error) {
     console.log(error.message);
