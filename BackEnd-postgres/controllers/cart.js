@@ -27,4 +27,27 @@ const addToCart = async (req, res) => {
   }
 };
 
-module.exports = { getCart, addToCart };
+// REMOVE CART ITEM
+const removeCart = async (req, res) => {
+  try {
+    const cartItem = await pool.query(
+      "SELECT * FROM cart_items WHERE cart_id = $1 AND items_id = $2",
+      [req.body.emailId, req.body.itemId]
+    );
+    if (cartItem.rows[0]) {
+      await pool.query(
+        "DELETE FROM cart_items WHERE cart_id = $1 AND items_id = $2",
+        [req.body.emailId, req.body.itemId]
+      );
+        return res.json("cart item successfully removed");
+    //   res.json(favItem.rows);
+    } 
+    else {
+      res.json("item not in favourite list");
+    }
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+module.exports = { getCart, addToCart, removeCart };
