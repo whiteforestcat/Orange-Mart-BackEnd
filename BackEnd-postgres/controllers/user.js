@@ -27,7 +27,17 @@ const getUsers = async (req, res) => {
 // SEEDING INITAL DATA
 const seeding = async (req, res) => {
   try {
+    // CLEARING ALL USERS, FAVS, CARTS AND SHIPMENT
+    await pool.query("DELETE FROM favs");
+    await pool.query("DELETE FROM cart");
+    await pool.query("DELETE FROM shipment");
     await pool.query("DELETE FROM users");
+
+    // RESETTING SEQUENCE TO 1
+    await pool.query("ALTER SEQUENCE users_id_seq RESTART WITH 1");
+    await pool.query("ALTER SEQUENCE favs_id_seq RESTART WITH 1");
+    await pool.query("ALTER SEQUENCE cart_id_seq RESTART WITH 1");
+    await pool.query("ALTER SEQUENCE shipment_id_seq RESTART WITH 1");
 
     // FIRST ACCOUNT
     await pool.query(
@@ -35,30 +45,40 @@ const seeding = async (req, res) => {
       ["mrmuhdamir@gmail.com", "92344590", true]
     );
     await pool.query("INSERT INTO favs (users_id) VALUES ($1)", [1]);
+    await pool.query("INSERT INTO cart (users_id) VALUES ($1)", [1]);
+    await pool.query("INSERT INTO shipment (users_id) VALUES ($1)", [1]);
     // SECOND ACCOUNT
     await pool.query(
       "INSERT INTO users (email, hash) VALUES ($1, $2) RETURNING *",
       ["test@gmail.com", "123456789"]
     );
     await pool.query("INSERT INTO favs (users_id) VALUES ($1)", [2]);
+    await pool.query("INSERT INTO cart (users_id) VALUES ($1)", [2]);
+    await pool.query("INSERT INTO shipment (users_id) VALUES ($1)", [2]);
     // THIRD ACCOUNT
     await pool.query(
       "INSERT INTO users (email, hash) VALUES ($1, $2) RETURNING *",
       ["hello@gmail.com", "123456789"]
     );
     await pool.query("INSERT INTO favs (users_id) VALUES ($1)", [3]);
+    await pool.query("INSERT INTO cart (users_id) VALUES ($1)", [3]);
+    await pool.query("INSERT INTO shipment (users_id) VALUES ($1)", [3]);
     // FOURTH ACCOUNT
     await pool.query(
       "INSERT INTO users (email, hash) VALUES ($1, $2) RETURNING *",
       ["bye@gmail.com", "123456789"]
     );
     await pool.query("INSERT INTO favs (users_id) VALUES ($1)", [4]);
+    await pool.query("INSERT INTO cart (users_id) VALUES ($1)", [4]);
+    await pool.query("INSERT INTO shipment (users_id) VALUES ($1)", [4]);
     // FIFTH ACCOUNT
     await pool.query(
       "INSERT INTO users (email, hash) VALUES ($1, $2) RETURNING *",
       ["world@gmail.com", "123456789"]
     );
     await pool.query("INSERT INTO favs (users_id) VALUES ($1)", [5]);
+    await pool.query("INSERT INTO cart (users_id) VALUES ($1)", [5]);
+    await pool.query("INSERT INTO shipment (users_id) VALUES ($1)", [5]);
     const users = await pool.query("SELECT * FROM users");
     // res.json(user.rows);
 

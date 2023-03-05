@@ -13,7 +13,7 @@ const pool = require("../db/db");
 //   }
 // };
 
-// DISPLAY ALL FAVOURITES ITEMS WITH CORRESPONDING USERS BY ID
+// DISPLAY ALL FAVOURITES ITEMS WITH CORRESPONDING USERS BY USERS.ID
 const getFavourites = async (req, res) => {
   try {
     const favourites = await pool.query(

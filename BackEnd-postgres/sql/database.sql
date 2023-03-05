@@ -30,20 +30,32 @@ CREATE TABLE items(
 
 CREATE TABLE cart(
     id BIGSERIAL NOT NULL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    description VARCHAR(255) NOT NULL,
-    price DECIMAL(5,2) NOT NULL,
-    quantity SMALLINT NOT NULL,
+    quantity SMALLINT,
+    -- quantity SMALLINT NOT NULL,
     users_id BIGINT REFERENCES users (id)
 );
 
-CREATE TABLE shipping(
+ -- SURROGATE TABLE BETWEEN CART AND GALLERY_ITEMS
+  CREATE TABLE cart_items(
+    cart_id BIGINT REFERENCES cart (id),
+    items_id BIGINT REFERENCES items (id),
+    PRIMARY KEY (cart_id, items_id)
+ );
+
+CREATE TABLE shipment(
     id BIGSERIAL NOT NULL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    description VARCHAR(255) NOT NULL,
-    price DECIMAL(5,2) NOT NULL,
-    quantity SMALLINT NOT NULL,
-    order_date DATE NOT NULL,
-    delivery_date DATE NOT NULL,
+    quantity SMALLINT,
+    order_date DATE,
+    delivery_date DATE,
+    -- quantity SMALLINT NOT NULL,
+    -- order_date DATE NOT NULL,
+    -- delivery_date DATE NOT NULL,
     users_id BIGINT REFERENCES users (id)
 );
+
+  -- SURROGATE TABLE BETWEEN CART AND SHIPMENT
+    CREATE TABLE cart_shipment(
+    cart_id BIGINT REFERENCES cart (id),
+    shipment_id BIGINT REFERENCES shipment (id),
+    PRIMARY KEY (cart_id, shipment_id)
+ );
