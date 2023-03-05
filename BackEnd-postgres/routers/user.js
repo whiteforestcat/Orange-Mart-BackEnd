@@ -19,6 +19,7 @@ const {
   removeFavourites,
 } = require("../controllers/favourite");
 const { allItems } = require("../controllers/gallery");
+const { addToCart, getCart } = require("../controllers/cart");
 
 // USER ROUTES
 router.post("/allusers", auth, getUsers); // display all users
@@ -36,6 +37,10 @@ router.get("/allitems", allItems); // display all items to sell
 // FAVOURITES ROUTES
 router.post("/addtofavourites", addToFavourites); // add item to favourites
 router.post("/allfavourites", getFavourites); // display all favourites
-router.delete("/deletefav", removeFavourites);  // delete favourites
+router.delete("/deletefav", removeFavourites); // delete favourites
+
+// CART ROUTES
+router.post("/addtocart", addToCart); // add item to cart
+router.post("/allcart", getCart); // display all items in cart
 
 module.exports = router;
