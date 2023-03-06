@@ -3,7 +3,7 @@ const pool = require("../db/db")
 // DISPLAY ALL ITEMS IN GALLERY TO SELL
 const allItems = async (req, res) => {
     try {
-        const items = await pool.query("SELECT * FROM items")
+        const items = await pool.query("SELECT * FROM items ORDER BY id")
         res.json(items.rows)
     } catch (error) {
         console.log(error.message)
