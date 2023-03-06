@@ -178,7 +178,12 @@ const logIn = async (req, res) => {
       expiresIn: "30D",
       jwtid: uuidv4(),
     });
-    const response = { access, refresh, payload };
+    const response = {
+      access,
+      refresh,
+      payload,
+      adminStatus: existingUser.rows[0].admin,
+    };
     res.json(response);
   } catch (error) {
     console.log(error.message);
