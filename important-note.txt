@@ -1,0 +1,23 @@
+cannot use delete user endpoint as this will mess up the running sequence
+
+TO DO LIST:
+1. CART
+- increase and decrease cart quantity
+- cart quantity should be in surrogate table, not in cart table DONE
+- need to restore item stock when cart is deleted
+
+2. SHIPEMENT
+- create shipment endpoints with FE
+- need to decrease item stock by one
+
+3. USERS
+- create cart and shipment rows for new user creation 
+
+
+CAUTION:
+clearing cart when confirm shipping will not stay in effect when refreshed as effect is stored in state
+When item is added to cart, stock quantity decreases immediately.
+
+
+GOOGLE PHOTOS API KEY: AIzaSyDrx0E4sSGIwMtWFpyIidV051UyKYUOBoo
+GOOGLE PHOTOS CLIENT ID: 133137388969-be7b8lndcanjj38cuk6202jfddejtalm.apps.googleusercontent.com
