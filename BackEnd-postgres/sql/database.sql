@@ -15,9 +15,10 @@ CREATE TABLE favs(
 CREATE TABLE items(
     id BIGSERIAL NOT NULL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    description VARCHAR(255) NOT NULL,
+    description text NOT NULL,
+    ingredients text NOT NULL,
     price DECIMAL(5,2) NOT NULL,
-    tag VARCHAR(255) NOT NULL,
+    dietary VARCHAR(255) NOT NULL,
     stock SMALLINT NOT NULL
 );
 
