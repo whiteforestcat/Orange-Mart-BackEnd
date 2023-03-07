@@ -38,7 +38,6 @@ const addToFavourites = async (req, res) => {
     if (existingFav.rows[0]) {
       return res.json("item already in favourites")
     }
-
     await pool.query(
       "INSERT INTO favs_items (favs_id, items_id) VALUES ($1, $2)",
       [req.body.emailId, req.body.itemId]
