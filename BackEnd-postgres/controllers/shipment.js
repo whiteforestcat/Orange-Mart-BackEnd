@@ -16,7 +16,14 @@ const getShipment = async (req, res) => {
 // ADD TO SHIPPING LIST
 const addToShipment = async (req, res) => {
   try {
-    // NEED TO OPTIMISE add to fav to prevent duplicates
+    const existingShipment = await pool.query(
+      "SELECT shipment_id, cart_id FROM cart_shipment WHERE shipment_id = $1 AND cart_id = $2",
+      [req.body.shipmentId, req.body.cartId]
+    );
+    // console.log(existingFav)
+    if (existingShipment.rows[0]) {
+      return res.json("cart already in shipment");
+    }
     await pool.query(
       "INSERT INTO cart_shipment (shipment_id, cart_id) VALUES ($1, $2)",
       [req.body.emailId, req.body.cartId]

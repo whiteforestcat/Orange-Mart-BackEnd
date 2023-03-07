@@ -9,6 +9,7 @@ TO DO LIST:
 2. SHIPEMENT
 - create shipment endpoints with FE
 - need to decrease item stock by one
+- create paid date and shipment date
 
 3. USERS
 - create cart and shipment rows for new user creation 
