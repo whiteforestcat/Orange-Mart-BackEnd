@@ -17,6 +17,14 @@ const getCart = async (req, res) => {
 const addToCart = async (req, res) => {
   try {
     // NEED TO OPTIMISE add to fav to prevent duplicates
+    const existingCart = await pool.query(
+      "SELECT cart_id, items_id FROM cart_items WHERE cart_id = $1 AND items_id = $2",
+      [req.body.cartId, req.body.itemId]
+    );
+    // console.log(existingFav)
+    if (existingCart.rows[0]) {
+      return res.json("item already in cart");
+    }
     await pool.query(
       "INSERT INTO cart_items (cart_id, items_id, quantity) VALUES ($1, $2, $3)",
       [req.body.emailId, req.body.itemId, req.body.quantity]
