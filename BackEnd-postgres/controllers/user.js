@@ -134,6 +134,20 @@ const newUser = async (req, res) => {
     await pool.query("INSERT INTO favs (users_id) VALUES ($1)", [
       (nextRowNumberFavs += 1),
     ]);
+    const rowNumberCart = await pool.query("SELECT COUNT(*) FROM cart");
+    let nextRowNumberCart = parseInt(rowNumberCart.rows[0].count);
+    // console.log("next number of rows in favs:", (nextRowNumberFavs += 1));
+    await pool.query("INSERT INTO cart (users_id) VALUES ($1)", [
+      (nextRowNumberCart += 1),
+    ]);
+    const rowNumberShipment = await pool.query("SELECT COUNT(*) FROM shipment");
+    let nextRowNumberShipment = parseInt(rowNumberShipment.rows[0].count);
+    // console.log("next number of rows in favs:", (nextRowNumberFavs += 1));
+    await pool.query("INSERT INTO shipment (users_id) VALUES ($1)", [
+      (nextRowNumberShipment += 1),
+    ]);
+    
+    
     // RETURNING * only for INSERT
     res.json(user.rows[0]);
   } catch (error) {
