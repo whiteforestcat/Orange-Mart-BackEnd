@@ -30,6 +30,15 @@ const getFavourites = async (req, res) => {
 const addToFavourites = async (req, res) => {
   try {
     // NEED TO OPTIMISE add to fav to prevent duplicates
+    const existingFav = await pool.query(
+      "SELECT favs_id, items_id FROM favs_items WHERE favs_id = $1 AND items_id = $2",
+      [req.body.favsId, req.body.itemId]
+    )
+      console.log(existingFav)
+    if (existingFav.rows[0]) {
+      return res.json("item already in favourites")
+    }
+
     await pool.query(
       "INSERT INTO favs_items (favs_id, items_id) VALUES ($1, $2)",
       [req.body.emailId, req.body.itemId]

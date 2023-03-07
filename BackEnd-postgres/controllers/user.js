@@ -118,8 +118,8 @@ const newUser = async (req, res) => {
       [req.body.email]
     );
     if (existingUser.rows[0]) {
-      console.log("hello");
-      //   console.log(existingUser.rows)
+      // console.log("hello");
+        console.log(existingUser.rows)
       return res.json({ status: "error", message: "duplicate email" });
     }
     // res.json(existingUser.rows[0]);
