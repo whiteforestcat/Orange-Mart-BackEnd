@@ -60,11 +60,12 @@ const removeCart = async (req, res) => {
         "DELETE FROM cart_items WHERE cart_id = $1 AND items_id = $2",
         [req.body.emailId, req.body.itemId]
       );
-      let currentStock = await pool.query("SELECT STOCK FROM items WHERE id = $1", [
-        req.body.itemId,
-      ]);
+      let currentStock = await pool.query(
+        "SELECT STOCK FROM items WHERE id = $1",
+        [req.body.itemId]
+      );
       console.log(currentStock.rows[0].stock);
-    //  let newStock = currentStock.rows[0].stock + cancelledItemStock.rows[0].quantity
+      //  let newStock = currentStock.rows[0].stock + cancelledItemStock.rows[0].quantity
       // console.log(newStock);
       await pool.query("UPDATE items SET stock = $1 WHERE id = $2", [
         cancelledItemStock.rows[0].quantity + currentStock.rows[0].stock,
@@ -81,4 +82,22 @@ const removeCart = async (req, res) => {
   }
 };
 
-module.exports = { getCart, addToCart, removeCart };
+// UPDATE CART QUANTITY
+const updateCart = async (req, res) => {
+  try {
+    await pool.query(
+      "UPDATE cart_items SET quantity = $1 WHERE cart_id = $2 AND items_id = $3",
+      [req.body.quantity, req.body.cartId, req.body.itemId]
+    );
+    console.log("hello");
+    // await pool.query(
+    //   "UPDATE cart_items SET quantity = $1 WHERE cart_id = $2 AND items_id = $3",
+    //   [req.body.quantity, req.body.cartId, req.params.ItemId]
+    // );
+    res.json("cart updated");
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+module.exports = { getCart, addToCart, removeCart, updateCart };

@@ -19,8 +19,17 @@ const {
   removeFavourites,
 } = require("../controllers/favourite");
 const { allItems } = require("../controllers/gallery");
-const { addToCart, getCart, removeCart } = require("../controllers/cart");
-const { addToShipment, getShipment, deleteShipment } = require("../controllers/shipment");
+const {
+  addToCart,
+  getCart,
+  removeCart,
+  updateCart,
+} = require("../controllers/cart");
+const {
+  addToShipment,
+  getShipment,
+  deleteShipment,
+} = require("../controllers/shipment");
 
 // USER ROUTES
 router.post("/allusers", auth, getUsers); // display all users
@@ -44,11 +53,11 @@ router.delete("/deletefav", removeFavourites); // delete favourites
 router.post("/addtocart", addToCart); // add item to cart
 router.post("/allcart", getCart); // display all items in cart
 router.delete("/deletecart", removeCart); // delete cart item
+router.patch("/updatecart", updateCart); // update cart quantity
 
 // SHIPMENT ROUTES
-router.post("/addtoshipment", addToShipment)
-router.post("/allshipment", getShipment)
-router.delete("/deleteshipment", deleteShipment)
-
+router.post("/addtoshipment", addToShipment);
+router.post("/allshipment", getShipment);
+router.delete("/deleteshipment", deleteShipment);
 
 module.exports = router;
