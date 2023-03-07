@@ -39,7 +39,7 @@ CREATE TABLE cart(
   CREATE TABLE cart_items(
     cart_id BIGINT REFERENCES cart (id),
     items_id BIGINT REFERENCES items (id),
-    quantity SMALLINT,
+    quantity SMALLINT NOT NULL,
     PRIMARY KEY (cart_id, items_id)
  );
 

@@ -43,13 +43,26 @@ const removeCart = async (req, res) => {
       [req.body.emailId, req.body.itemId]
     );
     if (cartItem.rows[0]) {
+      let cancelledItemStock = await pool.query(
+        "SELECT quantity FROM cart_items WHERE cart_id = $1 AND items_id = $2",
+        [req.body.emailId, req.body.itemId]
+      );
+      console.log(cancelledItemStock.rows[0].quantity);
       await pool.query(
         "DELETE FROM cart_items WHERE cart_id = $1 AND items_id = $2",
         [req.body.emailId, req.body.itemId]
       );
-    //   await pool.query(
-    //     "UPDATE items SET stock = "
-    //   )
+      let currentStock = await pool.query("SELECT STOCK FROM items WHERE id = $1", [
+        req.body.itemId,
+      ]);
+      console.log(currentStock.rows[0].stock);
+    //  let newStock = currentStock.rows[0].stock + cancelledItemStock.rows[0].quantity
+      // console.log(newStock);
+      await pool.query("UPDATE items SET stock = $1 WHERE id = $2", [
+        cancelledItemStock.rows[0].quantity + currentStock.rows[0].stock,
+        req.body.itemId,
+      ]);
+      // return res.json(cancelledItemStock);
       return res.json("cart item successfully removed");
       //   res.json(favItem.rows);
     } else {
