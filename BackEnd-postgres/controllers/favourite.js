@@ -17,7 +17,7 @@ const pool = require("../db/db");
 const getFavourites = async (req, res) => {
   try {
     const favourites = await pool.query(
-      "SELECT users.email AS name, items.id AS itemid, items.name AS favs_item FROM users JOIN favs ON favs.users_id = users.id JOIN favs_items ON favs_items.favs_id = favs.id JOIN items ON items.id = favs_items.items_id WHERE users.id = $1",
+      "SELECT users.email AS name, items.id AS itemid, items.name AS favs_item, favs_items.favs_id FROM users JOIN favs ON favs.users_id = users.id JOIN favs_items ON favs_items.favs_id = favs.id JOIN items ON items.id = favs_items.items_id WHERE users.id = $1",
       [req.body.id]
     );
     res.json(favourites.rows);
@@ -34,7 +34,7 @@ const addToFavourites = async (req, res) => {
       "SELECT favs_id, items_id FROM favs_items WHERE favs_id = $1 AND items_id = $2",
       [req.body.favsId, req.body.itemId]
     )
-      console.log(existingFav)
+      // console.log(existingFav)
     if (existingFav.rows[0]) {
       return res.json("item already in favourites")
     }
