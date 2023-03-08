@@ -119,7 +119,7 @@ const newUser = async (req, res) => {
     );
     if (existingUser.rows[0]) {
       // console.log("hello");
-        console.log(existingUser.rows)
+      console.log(existingUser.rows);
       return res.json({ status: "error", message: "duplicate email" });
     }
     // res.json(existingUser.rows[0]);
@@ -146,8 +146,7 @@ const newUser = async (req, res) => {
     await pool.query("INSERT INTO shipment (users_id) VALUES ($1)", [
       (nextRowNumberShipment += 1),
     ]);
-    
-    
+
     // RETURNING * only for INSERT
     res.json(user.rows[0]);
   } catch (error) {
@@ -225,15 +224,15 @@ const refreshToken = (req, res) => {
   }
 };
 
-// UPDATE USER PROFILE (CHANGE USERNAME OR PASSWORD)
+// UPDATE USER PROFILE (CHANGE PASSWORD)
 const updateUser = async (req, res) => {
   try {
-    await pool.query("UPDATE users SET email = $1, hash = $2 WHERE id = $3", [
-      req.body.email,
-      req.body.hash,
+    const hash = await bcrypt.hash(req.body.hash, 12);
+    await pool.query("UPDATE users SET hash = $1 WHERE id = $2", [
+      hash,
       req.params.id,
     ]);
-    res.json("user updated");
+    res.json("password updated");
   } catch (error) {
     console.log(error.message);
   }
