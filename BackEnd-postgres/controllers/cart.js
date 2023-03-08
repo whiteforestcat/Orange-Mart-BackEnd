@@ -85,15 +85,33 @@ const removeCart = async (req, res) => {
 // UPDATE CART QUANTITY
 const updateCart = async (req, res) => {
   try {
-    await pool.query(
-      "UPDATE cart_items SET quantity = $1 WHERE cart_id = $2 AND items_id = $3",
-      [req.body.quantity, req.body.cartId, req.body.itemId]
-    );
-    console.log("hello");
-    // await pool.query(
+    // console.log("hello");
+    // // await pool.query(
     //   "UPDATE cart_items SET quantity = $1 WHERE cart_id = $2 AND items_id = $3",
     //   [req.body.quantity, req.body.cartId, req.params.ItemId]
     // );
+    const currentStock = await pool.query(
+      "SELECT stock FROM items WHERE id = $1",
+      [req.body.itemId]
+    );
+    // console.log(currentStock.rows[0].stock);
+    const currentQuantity = await pool.query(
+      "SELECT quantity FROM cart_items WHERE cart_id = $1 AND items_id = $2",
+      [req.body.cartId, req.body.itemId]
+    );
+    // console.log(currentQuantity.rows[0].quantity);
+    const change = req.body.newQuantity - currentQuantity.rows[0].quantity;
+    // console.log(req.body.newQuantity);
+    // console.log(change);
+    await pool.query(
+      "UPDATE cart_items SET quantity = $1 WHERE cart_id = $2 AND items_id = $3",
+      [req.body.newQuantity, req.body.cartId, req.body.itemId]
+    );
+    await pool.query("UPDATE items SET stock = $1 WHERE id = $2", [
+      currentStock.rows[0].stock - change,
+      req.body.itemId,
+    ]);
+
     res.json("cart updated");
   } catch (error) {
     console.log(error.message);
