@@ -90,6 +90,10 @@ const updateCart = async (req, res) => {
     //   "UPDATE cart_items SET quantity = $1 WHERE cart_id = $2 AND items_id = $3",
     //   [req.body.quantity, req.body.cartId, req.params.ItemId]
     // );
+    if (!req.body.newQuantity) {
+      return res.json("please enter quantity")
+    }
+
     const currentStock = await pool.query(
       "SELECT stock FROM items WHERE id = $1",
       [req.body.itemId]
