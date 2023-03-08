@@ -16,7 +16,9 @@ const getCart = async (req, res) => {
 // ADD TO CART
 const addToCart = async (req, res) => {
   try {
-    // NEED TO OPTIMISE add to fav to prevent duplicates
+    if (!req.body.quantity) {
+      return res.json("please enter quantity")
+    }
     const existingCart = await pool.query(
       "SELECT cart_id, items_id FROM cart_items WHERE cart_id = $1 AND items_id = $2",
       [req.body.cartId, req.body.itemId]
