@@ -45,9 +45,9 @@ CREATE TABLE cart(
 
 CREATE TABLE shipment(
     id BIGSERIAL NOT NULL PRIMARY KEY,
-    quantity SMALLINT,
-    order_date DATE,
-    delivery_date DATE,
+    -- quantity SMALLINT NOT NULLL,
+    order_date DATE DEFAULT CURRENT_DATE,
+    delivery_date DATE DEFAULT CURRENT_DATE + 3,
     -- quantity SMALLINT NOT NULL,
     -- order_date DATE NOT NULL,
     -- delivery_date DATE NOT NULL,
@@ -58,5 +58,16 @@ CREATE TABLE shipment(
     CREATE TABLE cart_shipment(
     cart_id BIGINT REFERENCES cart (id),
     shipment_id BIGINT REFERENCES shipment (id),
+    -- items_id BIGINT REFERENCES items (id),
+    -- quantity SMALLINT NOT NULL,
     PRIMARY KEY (cart_id, shipment_id)
  );
+
+  -- SURROGATE TABLE BETWEEN SHIPMENT AND ITEM
+    CREATE TABLE shipment_items(
+    shipment_id BIGINT REFERENCES shipment (id),
+    items_id BIGINT REFERENCES items (id),
+    quantity SMALLINT NOT NULL,
+    PRIMARY KEY (shipment_id, items_id)
+ );
+ 

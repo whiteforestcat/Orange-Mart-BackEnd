@@ -148,7 +148,8 @@ const newUser = async (req, res) => {
     ]);
 
     // RETURNING * only for INSERT
-    res.json(user.rows[0]);
+    // res.json(user.rows[0]);
+    res.json("new user created")
   } catch (error) {
     console.log(error.message);
   }
